@@ -1,0 +1,12 @@
+DISCORD:
+  BOT_TOKEN: "DISCORD_BOT_TOKEN"
+  SPAM_CHANNEL: "bot-stuff" # where you want your bot to spam task notifications
+
+TORN:
+  OWNER_USER_ID: "1234567"
+  API_KEY: "USER_API_KEY" # Public Only key should be sufficient unless you want to use personal stock features
+  ITEM_MARKET_LISTING_FEE: 0.03 # 0.3% listing price
+  
+  STOCK_MIN: 84 # temp place holder
+  STOCK_MAX: 86 # temp place holder
+  STOCK_SELL_FEE: 0.001 # 0.1% total sell price

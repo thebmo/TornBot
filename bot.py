@@ -1,0 +1,49 @@
+import discord
+import yaml
+from torn_client import torn_client
+from cogs import stocks
+from discord.ext import commands
+
+CONFIG_FILE = 'config.yml'
+
+
+def main():
+    with open(CONFIG_FILE, 'r') as f:
+        config = yaml.safe_load(f)
+
+    intents = discord.Intents.default()
+    intents.message_content = True
+    bot = commands.Bot(command_prefix="!", intents=intents)
+
+
+    torn = torn_client.TornClient(config['TORN'])
+    spam_chan = None
+
+
+    @bot.event
+    async def on_ready():
+        spam_chan = next((chan for chan in bot.get_all_channels() if chan.name == config['DISCORD']['SPAM_CHANNEL']), None)
+        await bot.add_cog(stocks.Stocks(bot, spam_chan, torn, config['TORN']))
+
+        print(f"spam chan is set to: {spam_chan}")
+
+    
+    @bot.command()
+    async def pong(ctx):
+        await ctx.channel.typing()
+        await ctx.channel.send(f"{ctx.author.mention} PING!")
+    
+
+    @bot.command()
+    async def items(ctx):
+        items_json = torn.getItems()
+        response = items_json['error'] if 'error' in items_json.keys() else items_json['items']['1']['name']
+        await ctx.channel.typing()
+        await ctx.channel.send(response)
+
+
+    bot.run(config['DISCORD']['BOT_TOKEN'])
+
+
+if __name__ == '__main__':
+    main()
