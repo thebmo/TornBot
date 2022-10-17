@@ -1,2 +1,2 @@
 # TornBot
-A Bot for Torn
+A Discord Bot for Torn
