@@ -1,1 +1,1 @@
-__all__ = ['torn_client']
+__all__ = ['torn_client', 'statics.torn_endpoints', 'statics.torn_selections']

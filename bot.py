@@ -15,7 +15,6 @@ def main():
     intents.message_content = True
     bot = commands.Bot(command_prefix="!", intents=intents)
 
-
     torn = torn_client.TornClient(config['TORN'])
     spam_chan = None
 
@@ -27,12 +26,12 @@ def main():
 
         print(f"spam chan is set to: {spam_chan}")
 
-    
+
     @bot.command()
-    async def pong(ctx):
+    async def ping(ctx):
         await ctx.channel.typing()
-        await ctx.channel.send(f"{ctx.author.mention} PING!")
-    
+        await ctx.channel.send(f"{ctx.author.mention} PONG!")
+
 
     @bot.command()
     async def items(ctx):
