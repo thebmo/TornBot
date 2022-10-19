@@ -19,3 +19,9 @@ class TornItems(commands.Cog):
             else:
                 break
         return listing
+
+    # helper method
+    # TODO move this into the above command.
+    def findNetProfitForlistings(self, listing, purchase_cost, quantity):
+        gross = (listing - (self.LISTING_FEE * listing)) * quantity
+        return gross - (purchase_cost * quantity)

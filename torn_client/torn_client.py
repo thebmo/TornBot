@@ -10,24 +10,6 @@ class TornClient:
         self.LISTING_FEE = client_config['ITEM_MARKET_LISTING_FEE']
         self.API_KEY = client_config['API_KEY']
 
-    # TODO thse helpers dont really belong here, move them
-    def findListingForTargetProfit(self, target_profit, purchase_cost):
-        listing = target_profit + purchase_cost
-        while(True):
-            profit = (listing - (self.LISTING_FEE * listing))
-            if (profit < (target_profit + purchase_cost)):
-                listing+=1
-            else:
-                break
-        return listing
-
-
-    def findNetProfitForlistings(self, listing, purchase_cost, quantity):
-        gross = (listing - (self.LISTING_FEE * listing)) * quantity
-        return gross - (purchase_cost * quantity)
-
-    # End TODO
-
     # Returns a dict of all torn items
     # https://api.torn.com/torn/?selections=items&key={self.API_KEY}"
     def getTornItems(self):
