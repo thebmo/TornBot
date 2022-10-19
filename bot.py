@@ -1,7 +1,7 @@
 import discord
 import yaml
 from torn_client import torn_client
-from cogs import stocks
+from cogs import *
 from discord.ext import commands
 
 CONFIG_FILE = 'config.yml'
@@ -23,7 +23,8 @@ def main():
     async def on_ready():
         spam_chan = next((chan for chan in bot.get_all_channels() if chan.name == config['DISCORD']['SPAM_CHANNEL']), None)
 
-        await bot.add_cog(stocks.Stocks(bot, spam_chan, torn, config['TORN']))
+        await bot.add_cog(torn_stocks.TornStocks(bot, spam_chan, torn, config['TORN']))
+        await bot.add_cog(torn_items.TornItems(bot, spam_chan, torn, config['TORN']))
 
         print(f"spam chan is set to: {spam_chan}")
 

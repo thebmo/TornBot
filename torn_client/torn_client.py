@@ -11,19 +11,15 @@ class TornClient:
         self.API_KEY = client_config['API_KEY']
 
     # TODO thse helpers dont really belong here, move them
-    def findListingForProfit(self, target_profit):
-        listing = target_profit
+    def findListingForTargetProfit(self, target_profit, purchase_cost):
+        listing = target_profit + purchase_cost
         while(True):
             profit = (listing - (self.LISTING_FEE * listing))
-            if (profit != target_profit and profit < target_profit):
+            if (profit < (target_profit + purchase_cost)):
                 listing+=1
             else:
                 break
         return listing
-
-
-    def findProfitForListing(self, listing):
-        return (listing - (self.LISTING_FEE * listing))
 
 
     def findNetProfitForlistings(self, listing, purchase_cost, quantity):

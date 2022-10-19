@@ -1,6 +1,7 @@
 from discord.ext import tasks, commands
 
-class Stocks(commands.Cog):
+
+class TornStocks(commands.Cog):
     def __init__(self, bot, spam_chan, torn_client, config):
         self.bot = bot
         self.spam_chan = spam_chan
