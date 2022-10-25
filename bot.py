@@ -35,14 +35,6 @@ def main():
         await ctx.channel.send(f"{ctx.author.mention} PONG!")
 
 
-    @bot.command()
-    async def items(ctx):
-        items_json = torn.getTornItems()
-        response = items_json['error'] if 'error' in items_json.keys() else items_json['items']['1']['name']
-        await ctx.channel.typing()
-        await ctx.channel.send(f"{ctx.author.mention} {response}")
-
-
     bot.run(config['DISCORD']['BOT_TOKEN'])
 
 

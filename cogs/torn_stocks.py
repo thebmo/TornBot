@@ -21,7 +21,7 @@ class TornStocks(commands.Cog):
         profit_percent = self.config['STOCK_PROFIT_PERCENT']
 
         user_stock_info = await self.user_stocks_info()
-        torn_stock_info = await self.torn_stocks_info(','.join(user_stock_info.keys()))
+        torn_stock_info = await self.torn_stocks_info()
 
         for stock_id in user_stock_info:
             current = torn_stock_info[stock_id]['current_price']
@@ -65,8 +65,8 @@ class TornStocks(commands.Cog):
 	# 		"total_shares": 42767418442,
 	# 		"investors": 8257
     #      }
-    async def torn_stocks_info(self, stock_ids: str=""):
-        stocks = self.torn_client.getTornStock(stock_ids)
+    async def torn_stocks_info(self, stock_id: str=""):
+        stocks = self.torn_client.getTornStock(stock_id)
         return stocks
 
     # returns a truncated float at 2 decimals
