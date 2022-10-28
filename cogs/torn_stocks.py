@@ -24,14 +24,23 @@ class TornStocks(commands.Cog):
         torn_stock_info = await self.torn_stocks_info()
 
         for stock_id in user_stock_info:
-            current = torn_stock_info[stock_id]['current_price']
+            current_price = torn_stock_info[stock_id]['current_price']
             name = torn_stock_info[stock_id]['name']
-            bought = user_stock_info[stock_id]['high_price']
+            bought_price = user_stock_info[stock_id]['high_price']
+            shares = user_stock_info[stock_id]['shares']
 
+            target_sell_price = self.truncate_float(bought_price + (bought_price * profit_percent))
+            est_target_profit = (shares * target_sell_price) - (shares * bought_price)
+            est_current_profit = (shares * current_price) - (shares * bought_price)
+
+
+            print(f"CURRENT: {current_price} | BOUGHT: {bought_price} | TARGET: {target_sell_price} | "\
+                f"TAR PROF: {self.truncate_float(est_target_profit)} | "\
+                f"CUR PROF: {self.truncate_float(est_current_profit)}")
             # If current stock price is at or above profit % price
-            if current >= self.truncate_float(bought + (bought * profit_percent)):
+            if current_price >= target_sell_price:
                 await self.spam_chan.typing()
-                await self.spam_chan.send(f"@here {name} @ {current} SELL SELL!")
+                await self.spam_chan.send(f"@here {name} @ {current_price} SELL SELL!")
 
 
     # Returns dict of stock ids mapped ot shares bought and highes price
