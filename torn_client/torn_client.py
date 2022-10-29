@@ -21,8 +21,8 @@ class TornClient:
     # Returns a dict of all Torn stocks available
     # Else just the one stock if an ID is passed in
     # https://api.torn.com/torn/25?selections=stocks&key=API_KEY
-    def getTornStock(self, id: str="", key:str =None):
-        url = self.generateURL(TE.TORN, TS.Torn.STOCKS, id, key)
+    def getTornStock(self, stock_id: str="", key:str =None):
+        url = self.generateURL(TE.TORN, TS.Torn.STOCKS, stock_id, key)
         r = requests.get(url)
         return r.json()['stocks']
 
@@ -36,9 +36,17 @@ class TornClient:
         r = requests.get(url)
         return r.json()['stocks']
 
+    # Returns new events for a specific user
+    # If now ID/API key provided it will use the owner user's ID and API key
+    #   https://api.torn.com/user/{user_id}?selections=newevents&key={self.API_KEY}
+    def getUserNewEvents(self, user_id: str='', key: str=None):
+        url = self.generateURL(TE.USER, TS.User.NEWEVENTS, user_id, key)
+        r = requests.get(url)
+        return r.json()['events']
+
 
     # Returns a url string similar to:
-    #   https://api.torn.com/ENDPOINT/ID?selections=SELECTIONS&key={self.API_KEY}
+    #   https://api.torn.com/ENDPOINT/{id}?selections=SELECTIONS&key={self.API_KEY}
     def generateURL(self, endpoint: str, selections: str, id:str='', key: str=None):
         return self.BASE_URL \
             .replace('ENDPOINT', endpoint) \
@@ -49,6 +57,7 @@ class TornClient:
 
 def main():
     return False
+
 
 if __name__ == '__main__':
     main()
