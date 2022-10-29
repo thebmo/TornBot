@@ -1,5 +1,6 @@
 import discord
 import yaml
+from cogs import torn_events
 from torn_client import torn_client
 from cogs import *
 from discord.ext import commands
@@ -25,6 +26,7 @@ def main():
 
         await bot.add_cog(torn_stocks.TornStocks(bot, spam_chan, torn, config['TORN']))
         await bot.add_cog(torn_items.TornItems(bot, spam_chan, torn, config['TORN']))
+        await bot.add_cog(torn_events.TornEvents(bot, spam_chan, torn, config['TORN']))
 
         print(f"spam chan is set to: {spam_chan}")
 
