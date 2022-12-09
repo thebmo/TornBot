@@ -1,1 +1,1 @@
-__all__ = ['torn_stocks', 'torn_items']
+__all__ = ['torn_stocks', 'torn_items', 'torn_events', 'torn_market']

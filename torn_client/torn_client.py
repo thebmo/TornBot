@@ -45,6 +45,19 @@ class TornClient:
         return r.json()['events']
 
 
+    # returns item market listings for an ID
+    #   https://api.torn.com/market/180?selections=itemmarket&key={self.API_KEY}
+    #	[{
+    # 	    "ID": 163284850,
+    # 	    "cost": 3450,
+    # 	    "quantity": 1
+    #   }, ... ]
+    def getMarketItem(self, item_id: str='', key: str=None):
+        url = self.generateURL(TE.MARKET, TS.Market.ITEMMARKET, item_id, key)
+        r = requests.get(url)
+        return r.json()['itemmarket']
+
+
     # Returns a url string similar to:
     #   https://api.torn.com/ENDPOINT/{id}?selections=SELECTIONS&key={self.API_KEY}
     def generateURL(self, endpoint: str, selections: str, id:str='', key: str=None):

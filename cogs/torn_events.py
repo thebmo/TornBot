@@ -1,3 +1,4 @@
+from datetime import datetime
 from discord.ext import tasks, commands
 
 
@@ -9,16 +10,17 @@ class TornEvents(commands.Cog):
         self.config = config
         self.newevents = {}
         self.newevent_cache_length_seconds = 3600 # add to config
-        
+
         self.clear_newevents.start()
         self.notify_newevents.start()
 
 
     @tasks.loop(seconds=60)
     async def notify_newevents(self):
+        print(f"{datetime.now()} - checking events")
         user_newevents = await self.user_newevents_info()
         newevents_count = 0
-        
+
         for event_id in user_newevents:
             if not self.newevents.get(event_id, None):
                 new_event = user_newevents[event_id]['event']
@@ -28,10 +30,11 @@ class TornEvents(commands.Cog):
         if newevents_count > 0:
             await self.spam_chan.typing()
             await self.spam_chan.send(f"@here you have {newevents_count} new events.")
-    
+
 
     @tasks.loop(seconds=3600)
     async def clear_newevents(self):
+        print(f"{datetime.now()} - clearing newevent cache")
         self.newevents = {}
 
 
@@ -40,7 +43,7 @@ class TornEvents(commands.Cog):
     #     "1001526162": {
     #         "timestamp": 1667075875,
     #         "event": "You were sent some Xanax from
-    #           <a href = http://www.torn.com/profiles.php?XID=2086278>KaasChuig</a> 
+    #           <a href = http://www.torn.com/profiles.php?XID=2086278>KaasChuig</a>
     #           with the message: Pure sends them to help the faction after all.",
     #         "seen": 0
     #     }
