@@ -9,7 +9,7 @@ class TornEvents(commands.Cog):
         self.config = config
         self.newevents = {}
         self.newevent_cache_length_seconds = 3600 # add to config
-        
+
         self.clear_newevents.start()
         self.notify_newevents.start()
 
@@ -18,7 +18,7 @@ class TornEvents(commands.Cog):
     async def notify_newevents(self):
         user_newevents = await self.user_newevents_info()
         newevents_count = 0
-        
+
         for event_id in user_newevents:
             if not self.newevents.get(event_id, None):
                 new_event = user_newevents[event_id]['event']
@@ -28,7 +28,7 @@ class TornEvents(commands.Cog):
         if newevents_count > 0:
             await self.spam_chan.typing()
             await self.spam_chan.send(f"@here you have {newevents_count} new events.")
-    
+
 
     @tasks.loop(seconds=3600)
     async def clear_newevents(self):
