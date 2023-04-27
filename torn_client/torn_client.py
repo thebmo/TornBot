@@ -36,8 +36,17 @@ class TornClient:
         r = requests.get(url)
         return r.json()['stocks']
 
+    # Returns the status for a specific user
+    # If no ID/API key provided it will use the owner user's ID and API key
+    #   https://api.torn.com/user/{user_id}?selections=newevents&key={self.API_KEY}
+    def getUserStatus(self, user_id: str='', key: str=None):
+        url = self.generateURL(TE.USER, TS.User.BASIC, user_id, key)
+        r = requests.get(url)
+        return r.json()['status']
+
+
     # Returns new events for a specific user
-    # If now ID/API key provided it will use the owner user's ID and API key
+    # If no ID/API key provided it will use the owner user's ID and API key
     #   https://api.torn.com/user/{user_id}?selections=newevents&key={self.API_KEY}
     def getUserNewEvents(self, user_id: str='', key: str=None):
         url = self.generateURL(TE.USER, TS.User.NEWEVENTS, user_id, key)
