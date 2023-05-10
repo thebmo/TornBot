@@ -42,7 +42,7 @@ class TornClient:
     def getUserStatus(self, user_id: str='', key: str=None):
         url = self.generateURL(TE.USER, TS.User.BASIC, user_id, key)
         r = requests.get(url)
-        return r.json()['status']
+        return r.json()
 
 
     # Returns new events for a specific user
