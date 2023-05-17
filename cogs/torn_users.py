@@ -9,7 +9,7 @@ class TornUsers(commands.Cog):
         self.torn_client = torn_client
         self.config = config
 
-        # { "subscriber_id": { "user_id": "last_status" } }
+        # { "subscriber_id": { "user_id": { "name": "riptorn",  "last_status": "some status" } } }
         self.tracked_users = {}
 
         self.check_users.start()
@@ -27,7 +27,7 @@ class TornUsers(commands.Cog):
                 player_id = str(r['player_id'])
                 if not self.tracked_users.get(subscriber):
                     self.tracked_users[subscriber] = {}
-                self.tracked_users[subscriber][player_id] = ''
+                self.tracked_users[subscriber][player_id] = { "name": r['name' ], "last_status": '' }
 
                 await subscriber.send(f"Now tracking {r['name']}")
             except Exception as e:
@@ -56,7 +56,11 @@ class TornUsers(commands.Cog):
         users = self.tracked_users.get(subscriber)
         msg = "You are not tracking any users"
         if users:
-            msg = f"Tracking {' '.join(users)}"
+            names = []
+            for user_id in users.keys():
+                names.append(f"{users[user_id]['name']}({user_id})")
+
+            msg = f"Tracking {', '.join(names)}"
 
         await subscriber.send(msg)
 
@@ -65,14 +69,14 @@ class TornUsers(commands.Cog):
     async def check_users(self):
         if len(self.tracked_users.keys()) > 0:
             for subscriber in self.tracked_users.keys():
-                for user_id, last_status in self.tracked_users[subscriber].items():
+                for user_id, user_info in self.tracked_users[subscriber].items():
                     r = self.torn_client.getUserStatus(user_id=user_id)
                     status = r['status']['description']
-                    if status.lower() != last_status.lower():
-                        self.tracked_users[subscriber][user_id] = status
+                    if status.lower() != user_info['last_status'].lower():
+                        self.tracked_users[subscriber][user_id]['last_status'] = status
 
                         # dont spam hospital timers
-                        if not ("hospital" in last_status.lower() and "hospital" in status.lower()):
+                        if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
                             await subscriber.send(f"{r['name']} is now {status}")
 
 
