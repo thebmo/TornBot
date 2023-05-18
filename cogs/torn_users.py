@@ -65,19 +65,27 @@ class TornUsers(commands.Cog):
         await subscriber.send(msg)
 
 
+    # Checks each list of tracked users for each subscriber
+    # direct messaging the subscriber with any status
+    # changes
     @tasks.loop(seconds=60)
     async def check_users(self):
         if len(self.tracked_users.keys()) > 0:
             for subscriber in self.tracked_users.keys():
                 for user_id, user_info in self.tracked_users[subscriber].items():
-                    r = self.torn_client.getUserStatus(user_id=user_id)
-                    status = r['status']['description']
-                    if status.lower() != user_info['last_status'].lower():
-                        self.tracked_users[subscriber][user_id]['last_status'] = status
+                    response = None
+                    try:
+                        response = self.torn_client.getUserStatus(user_id=user_id)
+                        status = response['status']['description']
+                        if status.lower() != user_info['last_status'].lower():
+                            self.tracked_users[subscriber][user_id]['last_status'] = status
 
-                        # dont spam hospital timers
-                        if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
-                            await subscriber.send(f"{r['name']} is now {status}")
+                            # dont spam hospital timers
+                            if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
+                                await subscriber.send(f"{response['name']} is now {status}")
+                    except Exception as e:
+                        print(f"dumping response:\n{response}")
+                        print(e.with_traceback())
 
 
     # Helper to check for empty, too short, too long
