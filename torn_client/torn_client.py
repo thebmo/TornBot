@@ -75,6 +75,7 @@ class TornClient:
 
     def get_request(self, url:str):
         retry_count = 0
+        json_info = ''
         while retry_count < self.MAX_RETRIES:
             retry_count+=1
             try:
@@ -83,9 +84,8 @@ class TornClient:
                     return json_info
             except requests.exceptions.RequestException as e:
                 print(f"Try: {retry_count} - {e}")
-                if retry_count >= self.MAX_RETRIES:
-                    raise e
                 time.sleep(5)
+        return json_info
 
 
 def main():

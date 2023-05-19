@@ -9,7 +9,7 @@ class TornUsers(commands.Cog):
         self.torn_client = torn_client
         self.config = config
 
-        # { "subscriber_id": { "user_id": { "name": "riptorn",  "last_status": "some status" } } }
+        # { "subscriber(obj)": { "user_id": { "name": "riptorn",  "last_status": "some status" } } }
         self.tracked_users = {}
 
         self.check_users.start()
@@ -17,11 +17,12 @@ class TornUsers(commands.Cog):
 
     @commands.command(name="track")
     async def add_track_user(self, ctx, user_id:str = ''):
-        # TODO: fix default always tracking rip torn
         subscriber = ctx.author
         if self.is_valid_user_id(user_id):
             try:
                 r = self.torn_client.getUserStatus(user_id=user_id)
+                if r.get('error'):
+                    raise Exception(f"{r['error']['error']}")
 
                 # check if subscriber exists, init new dict
                 player_id = str(r['player_id'])
@@ -31,7 +32,7 @@ class TornUsers(commands.Cog):
 
                 await subscriber.send(f"Now tracking {r['name']}")
             except Exception as e:
-                await subscriber.send(str(e))
+                await subscriber.send(f"I AM ERROR - {e}")
         else:
             await subscriber.send(f"{user_id} is not a valid user id")
 
@@ -76,6 +77,9 @@ class TornUsers(commands.Cog):
                     response = None
                     try:
                         response = self.torn_client.getUserStatus(user_id=user_id)
+                        if response.get('error'):
+                            raise Exception(f"{response['error']['error']}")
+
                         status = response['status']['description']
                         if status.lower() != user_info['last_status'].lower():
                             self.tracked_users[subscriber][user_id]['last_status'] = status
@@ -84,12 +88,11 @@ class TornUsers(commands.Cog):
                             if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
                                 await subscriber.send(f"{response['name']} is now {status}")
                     except Exception as e:
-                        print(f"dumping response:\n{response}")
-                        print(e.with_traceback())
+                        await subscriber.send(f"Check Users Error - {e}")
 
 
     # Helper to check for empty, too short, too long
-    # and invalid user Ids
+    # and invalid user Id
     def is_valid_user_id(self, user_id:str):
         user_id = user_id.strip()
         if not user_id or \
