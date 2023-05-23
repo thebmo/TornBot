@@ -1,3 +1,4 @@
+from datetime import datetime
 from discord.ext import tasks, commands
 from re import search
 
@@ -88,7 +89,7 @@ class TornUsers(commands.Cog):
                             if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
                                 await subscriber.send(f"{response['name']} is now {status}")
                     except Exception as e:
-                        await subscriber.send(f"Check Users Error - {e}")
+                        print(f"{datetime.now()} - Check Users Error - {e}")
 
 
     # Helper to check for empty, too short, too long
