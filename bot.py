@@ -25,11 +25,13 @@ def main():
     async def on_ready():
         spam_chan = next((chan for chan in bot.get_all_channels() if chan.name == config['DISCORD']['SPAM_CHANNEL']), None)
 
-        await bot.add_cog(torn_stocks.TornStocks(bot, spam_chan, torn, config['TORN']))
-        await bot.add_cog(torn_items.TornItems(bot, spam_chan, torn, config['TORN']))
-        await bot.add_cog(torn_events.TornEvents(bot, spam_chan, torn, config['TORN']))
-        await bot.add_cog(torn_market.TornMarket(bot, spam_chan, torn, config['TORN']))
+        await bot.add_cog(torn_users.TornUsers(bot, spam_chan, torn, config['TORN']))
+        # await bot.add_cog(torn_stocks.TornStocks(bot, spam_chan, torn, config['TORN']))
+        # await bot.add_cog(torn_items.TornItems(bot, spam_chan, torn, config['TORN']))
+        # await bot.add_cog(torn_events.TornEvents(bot, spam_chan, torn, config['TORN']))
+        # await bot.add_cog(torn_market.TornMarket(bot, spam_chan, torn, config['TORN']))
 
+        # TODO: impliment proper logging
         print(f"{datetime.now()} - spam chan is set to: {spam_chan}")
 
 

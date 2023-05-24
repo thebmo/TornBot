@@ -3,6 +3,7 @@ DISCORD:
   SPAM_CHANNEL: "bot-stuff" # where you want your bot to spam task notifications
 
 TORN:
+  MAX_RETRIES: 5
   OWNER_USER_ID: "1234567"
   API_KEY: "USER_API_KEY" # Public Only key should be sufficient unless you want to use personal stock features
   ITEM_MARKET_LISTING_FEE: 0.03 # 0.3% listing price
