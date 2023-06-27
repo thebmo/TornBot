@@ -1,6 +1,11 @@
+import json
+import os
 from datetime import datetime
 from discord.ext import tasks, commands
 from re import search
+
+
+USERS_FILE = 'tracked_users.json'
 
 
 class TornUsers(commands.Cog):
@@ -18,6 +23,10 @@ class TornUsers(commands.Cog):
 
     @commands.command(name="track")
     async def add_track_user(self, ctx, user_id:str = ''):
+        # try to Load up stored users if empty
+        if self.tracked_users == {}:
+            self.tracked_users = await self.load_users()
+
         subscriber = ctx.author
         if self.is_valid_user_id(user_id):
             try:
@@ -72,6 +81,10 @@ class TornUsers(commands.Cog):
     # changes
     @tasks.loop(seconds=60)
     async def check_users(self):
+        # try to Load up stored users if empty
+        if self.tracked_users == {}:
+            self.tracked_users = await self.load_users()
+
         if len(self.tracked_users.keys()) > 0:
             for subscriber in self.tracked_users.keys():
                 for user_id, user_info in self.tracked_users[subscriber].items():
@@ -83,13 +96,13 @@ class TornUsers(commands.Cog):
 
                         status = response['status']['description']
                         if status.lower() != user_info['last_status'].lower():
-                            self.tracked_users[subscriber][user_id]['last_status'] = status
-
                             # dont spam hospital timers
                             if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
                                 await subscriber.send(f"{response['name']} is now {status}")
+                            self.tracked_users[subscriber][user_id]['last_status'] = status
                     except Exception as e:
                         print(f"{datetime.now()} - Check Users Error - {e}")
+            self.save_users()
 
 
     # Helper to check for empty, too short, too long
@@ -101,3 +114,28 @@ class TornUsers(commands.Cog):
             search("[a-zA-Z]*\s", user_id):
             return False
         return True
+
+
+    async def load_users(self):
+        users = {}
+        if os.path.isfile(USERS_FILE) and os.path.getsize(USERS_FILE) > 0:
+            temp_users = {}
+            with open(USERS_FILE, "r") as f:
+                temp_users = json.load(f)
+            for id in temp_users.keys():
+                user = await self.bot.fetch_user(id)
+                # Only load up tracked users for members still
+                # in the discord server
+                if user:
+                    users[user] = temp_users[id]
+
+        return users
+
+
+    def save_users(self):
+        temp_users = {}
+        for subscriber in self.tracked_users.keys():
+            temp_users[subscriber.id] = self.tracked_users[subscriber]
+        with open(USERS_FILE, "w") as f:
+            json_object = json.dumps(temp_users, indent=4)
+            f.write(json_object)

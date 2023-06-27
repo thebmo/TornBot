@@ -132,4 +132,4 @@ dmypy.json
 .pyre/
 
 # tracked users
-tracked_users.bin
+tracked_users.json
