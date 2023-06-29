@@ -54,11 +54,10 @@ class TornUsers(commands.Cog):
             await subscriber.send(f"{user_id} is not a valid user id.")
         else:
             try:
-                self.tracked_users[subscriber].pop(user_id)
+                username = self.tracked_users[subscriber].pop(user_id)["name"]
+                await subscriber.send(f"No longer tracking {username}[{user_id}]")
             except KeyError as e:
                 print(f"Error removing user id: {user_id}")
-            finally:
-                await subscriber.send(f"No longer tracking {user_id}")
 
 
     @commands.command(name="tracking")
@@ -69,7 +68,7 @@ class TornUsers(commands.Cog):
         if users:
             names = []
             for user_id in users.keys():
-                names.append(f"{users[user_id]['name']}({user_id})")
+                names.append(f"{users[user_id]['name']}[{user_id}]")
 
             msg = f"Tracking {', '.join(names)}"
 
