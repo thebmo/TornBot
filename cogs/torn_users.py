@@ -94,7 +94,7 @@ class TornUsers(commands.Cog):
                             raise Exception(f"{response['error']['error']}")
 
                         status = response['status']['description']
-                        if should_send_message(status, user_info['last_status']):
+                        if self.should_send_message(status, user_info['last_status']):
                             await subscriber.send(f"{response['name']} is now {status}")
                             self.tracked_users[subscriber][user_id]['last_status'] = status
                     except Exception as e:
@@ -103,7 +103,7 @@ class TornUsers(commands.Cog):
 
 
     # Helper to prevent spamming of status updates when in Jail or the Hospital
-    def should_send_message(status:str, last_status:str):
+    def should_send_message(self, status:str, last_status:str):
         instituitions = ["hospital", "jail"]
         status_doesnt_match = status.lower() != last_status.lower()
 
