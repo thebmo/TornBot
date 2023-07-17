@@ -94,14 +94,26 @@ class TornUsers(commands.Cog):
                             raise Exception(f"{response['error']['error']}")
 
                         status = response['status']['description']
-                        if status.lower() != user_info['last_status'].lower():
-                            # dont spam hospital timers
-                            if not ("hospital" in user_info['last_status'].lower() and "hospital" in status.lower()):
-                                await subscriber.send(f"{response['name']} is now {status}")
+                        if should_send_message(status, user_info['last_status']):
+                            await subscriber.send(f"{response['name']} is now {status}")
                             self.tracked_users[subscriber][user_id]['last_status'] = status
                     except Exception as e:
                         print(f"{datetime.now()} - Check Users Error - {e}")
             self.save_users()
+
+
+    # Helper to prevent spamming of status updates when in Jail or the Hospital
+    def should_send_message(status:str, last_status:str):
+        instituitions = ["hospital", "jail"]
+        status_doesnt_match = status.lower() != last_status.lower()
+
+        already_in_institution = False
+        for instituition in instituitions:
+            already_in_institution = instituition in last_status.lower() and instituition in status.lower()
+            if already_in_institution:
+                break
+
+        return status_doesnt_match and not already_in_institution
 
 
     # Helper to check for empty, too short, too long
